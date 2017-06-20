@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>猛犸奔腾-土豪金系列LED灯</title>
+<meta charset="utf-8">
+<meta name="author" content="mengma" />
+<meta name="keywords" content="LED" />
+<meta name="description" content="猛犸土豪金系列LED灯" />
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<link href="css/mengma.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="css/jquery.fancybox-1.3.4.css" media="screen" />
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery.fancybox-1.3.4.js" ></script>
+</head>
+<style>.load-img li{margin-bottom:60px;list-style:none;}</style>
+<div id='wx_logo' style='margin:0 auto;display:none;'>
+<img src="images/mengma.jpg" />
+</div>
+
+<body>
+<AUDIO style="display: none" id=soundtrack loop autoplay>
+  <SOURCE type="audio/mp3" src="resource/mengma.mp3">
+</AUDIO>
+     <div id="ThreeJS" style="">
+          <div id="Loading" style=" " >
+          <div style="text-align:center;width:100%;height:100%;position:absolute;top:20%;color:#333">
+            <ul class="load-img">
+            <li><img src="textures/mengmalogo.png"></li>
+            <li><img src="images/Loading.gif" /></li></ul>
+         </div>
+         </div>
+         
+        <div id="fullScreen"  style="visibility:visible">
+        <div id="buttonfullScreen" class="button" > 
+                 <input id="light_button" onClick="closeLight()" type="button"/>
+         </div>
+         </div>
+         
+         <div id="cotrolplay" style="visibility:visible">
+         <div id="buttonplay" class="button" > 
+         <img id="play" src="images/play.png" >
+         <img id="stop" src="images/back.png"  style="display:none">
+         </div>
+         </div>
+         
+         <div id="wg_plus_btn" style="">
+         <div id="plus_video_btn" class="button" style=""> 
+         <a href="http://detail.koudaitong.com/show/goods?alias=36be96jt2zbxb&v2/goods/36be96jt2zbxb" > 
+         <img src="images/buy.png"></a> </div>
+         </div>
+         </div>
+
+     	      <div id="guan_zone" >
+          <ul style="overflow:hidden;width:120px;margin:auto;">
+           <li><img  onClick="FNLight()"src="images/far.png" id="FNLight_icon" /><span id="linght_value">远光</span></li>
+           <li> <a class="intogame" href="competitio.html"><input class="led led0" value="有奖竞答"  id="changeG_0" type="button"  onClick="" /></a></li>
+           </ul>
+
+           <ul style="overflow:hidden;width:300px;margin:auto;">
+           <li> <input class="led led1" value="3000k"  id="changeG_1" type="button"  onClick="changeGuan1();" /></li>
+		   <li><input class="led led2" value="5000k" id="changeG_2" type="button" onClick="changeGuan2()"/></li>
+		    <li> <input  class="led led3" value="6000k" id="changeG_3" type="button" onClick="changeGuan3()"/></li> 
+			<li><input class="led led4"  value="8000k"  id="changeG_4" type="button" onClick="changeGuan4()"/></li>
+			<li> <input class="led led5" value="10000k"  id="changeG_5" type="button" onClick="changeGuan5()" /></li>
+			</ul>
+            </div>
+
+
+            <div align="center"  id="pnlight_div" style="visibility:hidden">
+            <img  id="pic" width="100%" height="50%" style="position:absolute; left:0; top:60px; "/>
+            <a onClick="closepic()" 
+            style="position:absolute; float:right;width:40px;height:40px; right:0; top:60px; background:url(images/close.png) " href="#" ></a>
+         </div>
+         
+        <script type="text/javascript">
+	$(document).ready(function() {
+ 		$(".intogame").fancybox({
+			'width':'100%',
+			'height':'100%',
+			'autoScale':false,
+			'transitionIn':'none',
+			'transitionOut':'none',
+			'type':'iframe'
+		});
+ 
+	});
+	</script>
+<script type="x-shader/x-vertex" id="vertexShader">
+			varying vec3 vWorldPosition;
+			void main() {
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			}
+</script> 
+<script type="x-shader/x-fragment" id="fragmentShader">
+			uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+			varying vec3 vWorldPosition;
+			void main() {
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h, 0.0 ), exponent ), 0.0 ) ), 1.0 );
+			}
+</script>
+<script src="js/three.min.js"></script> 
+<script src="js/OrbitControls.js"></script> 
+<script src="js/Animation.js"></script> 
+<script src="js/AnimationHandler.js"></script> 
+<script src="js/KeyFrameAnimation.js"></script> 
+<script src="js/ColladaLoader.js"></script> 
+<script src="js/Detector.js"></script> 
+<script>
+	/**
+ * @authorbobo / https://github.com/bobo
+ */
+	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    var img="";
+    var scene ;
+    var spotLight=new Array() ;
+    var lensFlare=new Array();
+    var  flareColor=new Array();
+    var pointColor;
+    var pointLight;
+	var isFN;
+			var camera;
+			var renderer;
+			var model;
+			var animations;
+			var kfAnimations = [ ];
+			var kfAnimationsLength = 0;
+			var loader = new THREE.ColladaLoader();
+			var lastTimestamp = 0;
+			var progress = 0;
+	  var container;
+	  var lightPosition;
+	  var guanPosition=1;
+	 function clearLight(){ 
+	      scene.remove(spotLight[1]);
+	      scene.remove(spotLight[2]);
+		  scene.remove(spotLight[4]);
+		  scene.remove(spotLight[3]);
+		  scene.remove(spotLight[5]);
+		  scene.remove(lensFlare[1]);
+		  scene.remove(lensFlare[2]);
+		  scene.remove(lensFlare[4]);
+		  scene.remove(lensFlare[3]);
+		  scene.remove(lensFlare[5]);};
+     function changeLight1(){
+		 clearLight();
+		  scene.add(spotLight[1]);
+		  scene.add(lensFlare[1]);
+		 lightPosition=1;
+		changeGuan1();
+		fnLightPostion=1;
+	  }
+	  function changeLight2(){
+		  clearLight();
+          scene.add(spotLight[2]);
+		  scene.add(lensFlare[2]);
+		  lightPosition=2;
+		  changeGuan2();
+		  fnLightPostion=2;
+	  }
+	  function changeLight3(){
+		   clearLight();
+          scene.add(spotLight[3]);
+		  scene.add(lensFlare[3]);
+		 lightPosition=3;
+		 changeGuan3();
+		  fnLightPostion=3;
+	  }function changeLight4(){
+		   clearLight();
+          scene.add(spotLight[4]);
+		  scene.add(lensFlare[4]);
+		  lightPosition=4;
+		 changeGuan4();
+		  fnLightPostion=4;
+	  }function changeLight5(){
+		   clearLight();
+          scene.add(spotLight[5]);
+		 scene.add(lensFlare[5]);
+		lightPosition=5;
+		changeGuan5();
+		 fnLightPostion=5;
+	  }
+	  function hideModel(){
+	  hp("1");
+	  hp("2");
+	  hp("3");
+	  hp("4");
+	  hp("5");  
+	   }
+	  
+	  function changeGuan1(){
+      hideModel();
+	  sp("1");
+	  guanPosition=1;
+	   fnLightPostion=1;
+	  }
+	  function changeGuan2(){
+		   hideModel();
+	 	sp("2");
+		  guanPosition=2;
+		 fnLightPostion=2;
+	  }
+	  function changeGuan3(){
+		   hideModel();
+	 sp("3");guanPosition=3;
+	  fnLightPostion=3;
+	  
+	  }
+	  function changeGuan4(){
+		   hideModel();
+	sp("4");guanPosition=4;
+	 fnLightPostion=4;
+		  }
+	    function changeGuan5(){
+			 hideModel();
+	sp("5");
+	guanPosition=5;
+	 fnLightPostion=5;
+	  
+	  }
+
+	 var flag=true;
+	 
+function closeLight(){
+	  if(flag){
+	document.getElementById("changeG_1").setAttribute("onClick","changeLight1()");
+	document.getElementById("changeG_2").setAttribute("onClick","changeLight2()");
+	document.getElementById("changeG_3").setAttribute("onClick","changeLight3()");
+	document.getElementById("changeG_4").setAttribute("onClick","changeLight4()");
+	document.getElementById("changeG_5").setAttribute("onClick","changeLight5()");
+	   switch(guanPosition){
+	  case 1:
+	   changeLight1();
+	  break;
+	   case 2:
+	   changeLight2();
+	  break;
+	   case 3:
+	   changeLight3();
+	  break;
+	   case 4:
+	   changeLight4();
+	  break;
+	   case 5:
+	   changeLight5();
+	  break;
+	  }
+	  flag=false;
+	  }
+	  
+	  else
+	  {
+		  if(isFN)
+		  {
+	 document.getElementById("changeG_1").setAttribute("onClick","changefnLight1()");
+	document.getElementById("changeG_2").setAttribute("onClick","changefnLight2()");
+	document.getElementById("changeG_3").setAttribute("onClick","changefnLight3()");
+	document.getElementById("changeG_4").setAttribute("onClick","changefnLight4()");
+	document.getElementById("changeG_5").setAttribute("onClick","changefnLight5()");
+			  }else{
+	document.getElementById("changeG_1").setAttribute("onClick","changeGuan1()");
+	document.getElementById("changeG_2").setAttribute("onClick","changeGuan2()");
+	document.getElementById("changeG_3").setAttribute("onClick","changeGuan3()");
+	document.getElementById("changeG_4").setAttribute("onClick","changeGuan4()");
+	document.getElementById("changeG_5").setAttribute("onClick","changeGuan5()");
+				  }
+	  scene.remove(spotLight[lightPosition]);
+	   scene.remove(lensFlare[lightPosition]);
+	  flag=true;
+	  }
+	  }
+function addLensFlare(img,id){
+		spotLight[id] = new THREE.DirectionalLight(pointColor);
+	    spotLight[id].position.set(0,-10, 20);
+        spotLight[id].castShadow = true;
+        spotLight[id].shadowCameraNear = 0.1;
+        spotLight[id].shadowCameraFar = 100;
+        spotLight[id].shadowCameraFov = 50;
+        spotLight[id].distance = 0;
+        spotLight[id].shadowCameraNear = 2;
+        spotLight[id].shadowCameraFar = 200;
+        spotLight[id].shadowCameraLeft = -100;
+        spotLight[id].shadowCameraRight = 100;
+        spotLight[id].shadowCameraTop = 100;
+        spotLight[id].shadowCameraBottom = -100;
+        spotLight[id].shadowMapWidth = 2048;
+        spotLight[id].shadowMapHeight = 2048;
+        var textureFlare0 = THREE.ImageUtils.loadTexture("textures/"+img);
+		 flareColor[id] = new THREE.Color(0xffffff);
+         lensFlare[id] = new THREE.LensFlare(textureFlare0, 1000, 0.0, THREE.AdditiveBlending, flareColor[id]);
+        lensFlare[id].position.copy(spotLight[id].position);
+	    }
+         addLensFlare("light01.png",'1');
+		 addLensFlare("light02.png",'2');
+		 addLensFlare("light03.png",'3');
+		 addLensFlare("light04.png",'4');
+		 addLensFlare("light05.png",'5');
+		  var Model_Count=7;
+  
+        function init() {
+//           scene = new THREE.Scene();
+            var renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+		    renderer.setPixelRatio( window.devicePixelRatio);
+			renderer.sortObjects = false;
+		   
+            renderer.setSize(window.innerWidth, window.innerHeight);
+      	    var camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.01, 1000 );
+				camera.position.set( 0, -100, 0 );
+				camera.lookAt( new THREE.Vector3(0, 100, 0) );
+				// Scene
+				scene = new THREE.Scene();
+				pointLight = new THREE.PointLight( 0xffffff, 3);
+				pointLight.position.set(100, 100, 100);
+				scene.add( pointLight );
+				pointLight1 = new THREE.PointLight( 0xffffff, 3);
+				pointLight1.position.set(100, 0, 0);
+				scene.add( pointLight1 );
+		        pointLight = new THREE.PointLight( 0xffffff,2 );
+	
+		scene.add( pointLight );
+      	var controls = new THREE.OrbitControls( camera );
+		controls.minDistance =220;
+		controls.rotateSpeed=0.5;
+		controls.zoomSpeed=0.5;
+		controls.panSpeed=0.5;
+        controls.maxDistance =300;
+	    container= document.getElementById("ThreeJS");
+		var loading = document.getElementById("Loading");
+	    container.appendChild( renderer.domElement );
+		var loader = new THREE.ColladaLoader();
+        var mesh;
+		
+        loader.load("models2/qita.dae", function (result) {
+                mesh = result.scene;
+			    animations = result.animations;
+				kfAnimationsLength = animations.length;
+                mesh.scale.set(1, 1, 1);
+                scene.add(mesh);
+			for ( var i = 0; i < kfAnimationsLength; ++i ) {
+				  var animation = animations[ i ];
+				  var kfAnimation = new THREE.KeyFrameAnimation( animation );
+					  kfAnimation.timeScale = 1;
+					  kfAnimations.push( kfAnimation );
+				}
+					$("#play").click(function(){start();$("#play").hide();$("#stop").show();});
+				    $("#stop").click(function(){_Stop();$("#play").show();$("#stop").hide();});
+				    animate( lastTimestamp );
+				    Model_Count--;
+				    Count();
+              });
+		 var mesh;
+            loader.load("models2/dengzhu.dae", function (result) {
+            mesh = result.scene;
+			animations = result.animations;
+			     mesh.scale.set(1, 1, 1);
+                 scene.add(mesh);
+				 Model_Count--;
+				
+        });
+			  var meshs = {};
+		function Add_guan(dae, ID, Vis) {
+			  var loader = new THREE.ColladaLoader();
+              loader.load('models2/' + dae + '.dae',function ( collada ) {
+                model = collada.scene;
+				 model.name = "mesh_" + ID;
+                meshs[ID] = model;
+				setposition();
+			    meshs[ID].visible = Vis;
+				animations = collada.animations;
+				  scene.add(model);
+				Model_Count--;
+				});
+	              };
+			
+			
+			function Count(){ 
+		        if (Model_Count == 0) {
+                loading.innerHTML="Loading Finish!";
+                loading.parentNode.removeChild(loading);
+                $("#start").show();}
+				};
+				Count();
+          sp = function (MName) {
+		  var Mname = "#changeM_" + MName;
+            meshs[MName].visible = true;
+          }
+		
+          hp = function (MName) {
+			    var Mname = "#changeM_" + MName;
+            meshs[MName].visible = false;
+           }
+		function setposition(){model.scale.x = model.scale.y = model.scale.z = 1 
+	                model.position.set(0,0,0);
+	          }
+         render();
+        function render() {
+            controls.update();
+			pointLight.position.copy( camera.position );
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        	}
+        function animate( timestamp ) {
+				var frameTime = ( timestamp - lastTimestamp ) * 0.001;
+				if ( progress >= 0 && progress < 48 ) {
+					for ( var i = 0; i < kfAnimationsLength; ++i ) {
+						kfAnimations[ i ].update( frameTime );
+					}
+				} else if ( progress >= 48 ) {
+				for ( var i = 0; i < kfAnimationsLength; ++i ) {
+						kfAnimations[ i ].stop();
+					}
+					progress = 0;
+					start();
+				}
+				pointLight.position.copy( camera.position );
+				progress += frameTime;
+				lastTimestamp = timestamp;
+				renderer.render( scene, camera );
+					requestAnimationFrame( animate );
+
+			}
+			
+			 function _Stop() {
+				    for ( var i = 0; i < kfAnimationsLength; ++i ) {
+					var animation = kfAnimations[i];
+					for ( var h = 0, hl = animation.hierarchy.length; h < hl; h++ ) {
+						  var keys = animation.data.hierarchy[ h ].keys;
+						  var sids = animation.data.hierarchy[ h ].sids;
+						  var obj = animation.hierarchy[ h ];
+						  if ( keys.length && sids ) {
+							    for ( var s = 0; s < sids.length; s++ ) {
+								var sid = sids[ s ];
+								var next = animation.getNextKeyWith( sid, h, 0 );
+								if ( next ) next.apply( sid );
+
+							}
+							obj.matrixAutoUpdate = false;
+							animation.data.hierarchy[ h ].node.updateMatrix();
+							obj.matrixWorldNeedsUpdate = true;
+						}
+					}
+					animation.loop = false;
+					animation.update();
+					animation.stop();
+							}
+			        };
+	function start() {
+				for ( var i = 0; i < kfAnimationsLength; ++i ) {
+		              var animation = kfAnimations[i];
+					  for ( var h = 0, hl = animation.hierarchy.length; h < hl; h++ ) {
+ 					     	var keys = animation.data.hierarchy[ h ].keys;
+						    var sids = animation.data.hierarchy[ h ].sids;
+						    var obj = animation.hierarchy[ h ];
+						    if ( keys.length && sids ) {
+							for ( var s = 0; s < sids.length; s++ ) {
+								var sid = sids[ s ];
+								var next = animation.getNextKeyWith( sid, h, 0 );
+								if ( next ) next.apply( sid );
+							}
+							obj.matrixAutoUpdate = false;
+							animation.data.hierarchy[ h ].node.updateMatrix();
+							obj.matrixWorldNeedsUpdate = true;
+						}
+					}
+					animation.loop = false;
+					animation.play();
+				}
+
+			};
+			Add_guan("boli", "1", false);
+			Add_guan("boli01", "2", false);
+			Add_guan("boli02", "3", false);
+			Add_guan("boli03", "4", false);
+			Add_guan("boli04", "5", false);
+    };
+    window.onload = init;
+
+
+</script>
+ <script>
+var isFarLight=true;
+var fnLightPostion;
+function FNLight(){
+	isFN=true;
+	document.getElementById("changeG_1").setAttribute("onClick","changefnLight1()");
+	document.getElementById("changeG_2").setAttribute("onClick","changefnLight2()");
+	document.getElementById("changeG_3").setAttribute("onClick","changefnLight3()");
+	document.getElementById("changeG_4").setAttribute("onClick","changefnLight4()");
+	document.getElementById("changeG_5").setAttribute("onClick","changefnLight5()");
+	document.getElementById("pnlight_div").style.visibility="visible"
+		if(isFarLight){
+				document.getElementById("FNLight_icon").src="images/near.png";
+				document.getElementById("linght_value").innerHTML="远光";
+			
+				isFarLight=false;
+			}
+			else{
+					document.getElementById("FNLight_icon").src="images/far.png";
+					document.getElementById("linght_value").innerHTML="近光";
+				
+					isFarLight=true;
+				}
+			switch (fnLightPostion){
+			case 1:
+			changefnLight1();
+			  break;
+			  case 2:
+			changefnLight2();
+			  break;
+			  case 3:
+			changefnLight3();
+			  break;
+			  case 4:
+			changefnLight4();
+			  break;
+			  case 5:
+			changefnLight5();
+			  break;
+			  default:
+			  changefnLight1();
+			  break;
+			  
+			  }
+		
+	}
+function changefnLight1(){
+		if(isFarLight){
+			 document.getElementById("pic").src="images/yellowfar.jpg";
+			}
+			else{
+				 document.getElementById("pic").src="images/yellownear.jpg";
+				}
+				changeLight1();
+				changeGuan1();
+				
+		}
+	function changefnLight2(){
+		if(isFarLight){
+			  document.getElementById("pic").src="images/yellow2far.jpg";
+			}
+			else{
+				 document.getElementById("pic").src="images/yellow2near.jpg";
+				}
+				changeLight2();
+				changeGuan2();
+		}
+		function changefnLight3(){
+		if(isFarLight){
+			 document.getElementById("pic").src="images/Whitefar.jpg";
+			}
+			else{
+				 document.getElementById("pic").src="images/Whitenear.jpg";
+				}
+				changeLight3();
+				changeGuan3();
+		}
+		function changefnLight4(){
+		if(isFarLight){
+			 document.getElementById("pic").src="images/bluefar.jpg";
+			}
+			else{
+				document.getElementById("pic").src="images/bluenear.jpg";
+				}
+				changeLight4();
+				changeGuan4();
+		}
+		function changefnLight5(){
+		if(isFarLight){
+			 document.getElementById("pic").src="images/blue2far.jpg";
+			}
+			else{
+			 document.getElementById("pic").src="images/blue2near.jpg";
+				}
+				changeLight5();
+				changeGuan5();
+		}
+function closepic(){
+	isFN=false;
+	document.getElementById("pnlight_div").style.visibility="hidden";
+	 document.getElementById("changeG_1").setAttribute("onClick","changeLight1();");
+	document.getElementById("changeG_2").setAttribute("onClick","changeLight2()");
+	document.getElementById("changeG_3").setAttribute("onClick","changeLight3()");
+	document.getElementById("changeG_4").setAttribute("onClick","changeLight4()");
+	document.getElementById("changeG_5").setAttribute("onClick","changeLight5()");
+	}
+</script>
+<script type="text/javascript">$("#led_zone input").click(function(){$("#led_zone input").removeClass("selected");$(this).addClass("selected")});
+$("#guan_zone input").click(function(){$("#guan_zone input").removeClass("selected");$(this).addClass("selected")})</script>
+</body>
+</html>

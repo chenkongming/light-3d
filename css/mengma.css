@@ -1,0 +1,195 @@
+@charset "UTF-8";
+* {
+	margin: 0;
+	padding: 0;
+}
+ul,li{list-style:none;}
+body {
+	color: #fff;
+	font-size: 15px;
+	font-family: 'Fjalla One', sans-serif;
+	overflow: hidden;
+	background:#2e2e2e;
+}
+
+#ThreeJS {position:relative;overflow: hidden;background:url(../images/mengmabg.png) no-repeat center center;
+	
+}
+#fullScreen {
+	visibility: visible;
+	position:relative;
+	left: 5px;
+	top: 5px;
+}
+#buttonfullScreen {
+	width: 75px;
+	height: 45px;
+	left: 5px;
+	top: 5px;
+}
+#cotrolplay {
+	visibility: visible;
+	position: relative;
+	left: 48%;
+	top: 5px;
+}
+#buttonplay {
+	width: 75px;
+	height: 45px;
+	left: 5px;
+	top: 5px;
+}
+#wg_plus_btn {
+	visibility: visible;
+	position: relative;
+	right: 5px;
+	top: 5px;
+}
+#plus_video_btn {
+	width: 75px;
+	height: 45px;
+	right: 5px;
+	top: 5px;
+}
+#my_viewport {
+	position: relative;
+	width: 100%;
+	height: 65%;
+	z-index: 400;
+}
+.buttonBG {
+	position: absolute;
+	
+}
+.button {
+	text-align: center;
+	overflow: hidden;
+	line-height: 30px;
+	z-index: 40;
+	position: absolute
+}
+
+.led {
+	font-size:11px;
+	color: #ffffff;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	diaplay: block;
+	height: 60px;
+	padding-top: 40px;
+	width:60px;
+	color:#a0753b;
+	
+}
+#changeG_0{font-size:10px;}
+.selected {
+	color: #F00;
+}
+.led:hover {
+	color: #F00;
+}
+.light {
+	border: none;
+	outline: none;
+	diaplay: block;
+	margin-top: 10px;
+	height: 40px;
+	width: 40px;
+}
+#light_on {
+	background: url(../images/on.png)
+}
+#light_off {
+	background: url(../images/off.png);
+}
+#FNLight_icon{display:block;margin:auto;padding-bottom:4px;}
+#linght_value{width:60px;text-align:center;display:block;font-size:10px;color:#a0753b;}
+.led0 {
+	background:url(../images/competition.png) no-repeat center top;
+}
+.led1 {
+	background: url(../images/3000k.png) no-repeat center top;
+}
+.led2 {
+	background: url(../images/5000k.png) no-repeat center top;
+}
+.led3 {
+	background: url(../images/6000k.png) no-repeat center top;
+}
+.led4 {
+	background: url(../images/8000k.png) no-repeat center top;
+}
+.led5 {
+	background: url(../images/10000k.png) no-repeat center top;
+}
+#Loading {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #ffffff;
+	position:absolute;
+	z-index: 5555;
+	font-size: 2em;
+}
+#guan_zone li{float:left;width:60px;}
+#guan_zone {
+		bottom: 20px;
+	list-style: none;
+	position:absolute;
+	left:42%;
+}
+#light_button{display:block;background:url(../images/light.png);height:40px;width:67px;outline:none;border:none;}
+@media screen and (max-width:360px) {
+	#linght_value{color:#ffffff;}
+	.led {
+	color: #ffffff;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	diaplay: block;
+}
+	#cotrolplay {
+	visibility: visible;
+	position: relative;
+	left: 38%;
+	top: 5px;
+}
+#guan_zone li{float:left;}
+
+#guan_zone {
+		bottom: 5px;
+	list-style: none;
+	position:absolute;
+	left:8.5%;
+}
+}
+@media screen and (max-width:320px) {
+	#linght_value{color:#ffffff;}
+	.led {
+	color: #ffffff;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	diaplay: block;
+	
+	
+	
+}
+#cotrolplay {
+	visibility: visible;
+	position: relative;
+	left: 36.8%;
+	top: 5px;
+}
+#guan_zone li{float:left;}
+
+#guan_zone {
+		bottom: 5px;
+	
+	list-style: none;
+	position:absolute;
+	left:3%;
+}
+}

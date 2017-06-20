@@ -1,0 +1,83 @@
+﻿@charset "utf-8";
+
+*{margin:0;padding:0}
+
+body{font-family: "微软雅黑"; font-size:16px;overflow:hidden;}
+ul,ol,li,h1,h2,h3,h4,h5,h6{list-style-type: none}
+.div{position:absolute;
+left:0;
+width: 100%;
+height:100%;
+    padding:10px;
+    background:#fff;
+}
+
+a{
+    text-decoration: none;
+    text-align:center;
+    width: 50px;
+    height: 20px;
+	line-height:20px;
+    font-size:14px;
+    border-radius: 3px;
+    background: dodgerblue;
+    padding:3px 15px;
+    color: #fff;
+    margin-left:5px;
+}
+.next{
+    background:#fff;
+    border:1px solid dodgerblue;
+    color:dodgerblue;
+}
+
+h3{
+   text-align: center;
+    margin: 10px;
+}
+hr{
+    height:2px;
+    background:dodgerblue;
+    margin:10px;
+}
+ul{
+    margin:10px;
+}
+ul li{
+    padding:10px;
+}
+ul .li{
+    margin-left:10px;
+}
+
+.fy{margin: 30px 0 30px 20px;}
+
+/*进度条样式*/
+.progressbar_1{
+    background-color:#fff;
+    height:20px;
+    width:200px;
+    border:1px solid #bbb;
+    color:#222;
+    margin-left:26px;
+    margin-top:20px;
+}
+.progressbar_1 .bar {
+    background-color:dodgerblue;
+    height:20px;
+    width:0;
+}
+#intogame{position:absolute;left:28%;bottom:300px;color:#fff;text-align:center;height:32px;line-height:32px;border-radius:5px 5px 5px 5px;
+width:120px;display:block;background:#37b2f4;text-decoration:none;cursor:pointer;} 
+#intogame:hover{background:#00C;}
+#game_map{width:60%; }
+@media screen and (max-width:360px) {
+#game_map{width:100%; }	
+#intogame{position:absolute;left:6%;bottom:-20%;}
+#intogame{}
+}
+/*.l p{*/
+    /*text-align:center;*/
+    /*position:relative;*/
+    /*top:100px;*/
+/*}*/
